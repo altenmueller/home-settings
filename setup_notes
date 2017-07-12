@@ -1,0 +1,69 @@
+## clipboard sharing
+install xquartz (need this for x11 forwarding!)
+run xquartz look inside the preferences, ensure clipboard sharing is enabled
+install xclip
+add 
+        <key>LSUIElement</key>
+        <true/>
+to the end of /Applications/Utilities/XQuartz.app/Contents/Info.plist
+this hides XQuartz while it's running
+have to run xterm and quit initially to get clipboard sharing to work
+if you run echo "test"|xclip -i -selection clipboard it should get synced
+make sure vim is compiled with x11 support and set its register to unnamedplus (the clipboard)
+add XQuartz to the startup items
+need to make sure xterm runs and then exits
+
+add this to your ~/.ssh/config:
+    ForwardX11 yes
+    ForwardX11Trusted yes
+This will ensure that X11 sessions don't time out
+
+
+## vm
+increase number of cpus
+increase memory
+add host-only adapter and set static ip on it
+add nat adapter so it can connect to the internet
+ssh to the host only adapter so the connection doesn't get interrupted when you unplug
+
+## building
+modify ib so that it prints the compiler commands
+
+## for higher parallelism
++++ b/native/params.cfg
+@@ -6,4 +6,4 @@
+ #####################################################################################
+
+ toolchain_root = '/usr/local/gcc-linaro-6.1.1-2016.08-x86_64_arm-linux-gnueabihf'
+-parallel_recipes = '3'
++parallel_recipes = '100'
+
+## vim
+.vim/autoload:
+  pathogen.vim
+.vim/bundle:
+  ack.vim
+  ctrlp.vim
+  nerdtree
+  vim-colors-solarized
+  vim-fugitive
+  YouCompleteMe
+
+## youcompleteme
+
+We need to use an older version because our codebase only works with clang-3.8 right now.
+
+cd ~/.vim/bundle
+git clone https://github.com/Valloric/YouCompleteMe.git
+git checkout e332cdb2a0c8599dead1d362b87bb9fb79c9a955
+
+change first line of install.py to
+#!/usr/bin/env python3
+
+run git submodule update --init --recursive
+
+in third_party/ycmd/cpp/CMakeLists.txt, go to line 208, and add below
+set(Python_ADDITIONAL_VERSIONS 3.4)
+
+then go to ~/.vim/bundle/YouCompleteMe
+run ./install.py --clang-completer
