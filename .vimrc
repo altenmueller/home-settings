@@ -10,11 +10,17 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 
+" make backspace work over newlines and indentation
+set backspace=indent,eol,start
+
 " Create a vertical ruler at 80 characters
 " set textwidth=80
 " set colorcolumn=+1  
 set colorcolumn=80
 set ruler
+
+set nohlsearch      " disable search highlighting
+set noincsearch     " don't jump around to the next match as we're typing
 
 " Since I'm sloppy with my shift key, :Wq maps to :wq
 command W w
@@ -101,3 +107,34 @@ nmap <C-t> <C-o>
 let g:ackprg = 'ag'
 " map Ctrl-/ to search
 nmap <C-_> :Ack 
+
+" F4 key toggles comments on or off
+nnoremap <F4> :call NERDComment(0,"toggle")<CR>
+vnoremap <F4> :call NERDComment(0,"toggle")<CR>
+
+" Map Ctrl-h,j,k,l to move around splits
+" due to a weird osx thing, Ctrl-H is actually <BS> (backspace)
+"nmap <BS> <C-W>h
+"tnoremap <BS> <C-\><C-N><C-w>h
+tnoremap <C-j> <C-\><C-N><C-w>j
+tnoremap <C-k> <C-\><C-N><C-w>k
+tnoremap <C-l> <C-\><C-N><C-w>l
+tnoremap <C-h> <C-\><C-N><C-w>h
+inoremap <C-j> <C-\><C-N><C-w>j
+inoremap <C-k> <C-\><C-N><C-w>k
+inoremap <C-l> <C-\><C-N><C-w>l
+inoremap <C-h> <C-\><C-N><C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+" Automatically enter terminal mode when switching to a terminal buffer.
+autocmd BufWinEnter,WinEnter term://* startinsert
+
+let mapleader=";"
+nnoremap <silent> <leader><SPACE> :split<CR>
+nnoremap <silent> <leader><CR> :vsplit<CR>:term<CR>
+
+" open splits to the bottom and right, which feels more natural
+set splitbelow
+set splitright

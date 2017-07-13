@@ -52,3 +52,5 @@ if [[ -f ~/.bash_aliases ]]; then
 fi
 
 alias ag='ag -s '
+alias vi='nvim'
+alias vim='vim'
