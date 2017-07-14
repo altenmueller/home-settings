@@ -67,7 +67,7 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.beam,*/.eunit/*,*.pyc
 let g:ctrlp_user_command = 'ag %s -i --nogroup --hidden --ignore .git --ignore .svn --ignore .hg --ignore "**/*.pyc" --ignore .DS_Store --ignore "**/*.ebin" --ignore "**/*.swp" --ignore "**/*.so" -g ""'
 
 " F2 key opens Nerdtree
-nmap <F2> :NERDTree<CR>
+nmap <F2> :NERDTreeToggle<CR>
 
 " Use the system clipboard as the default register. This lets vim share text
 " with other programs easily.
@@ -116,6 +116,7 @@ vnoremap <F4> :call NERDComment(0,"toggle")<CR>
 " due to a weird osx thing, Ctrl-H is actually <BS> (backspace)
 "nmap <BS> <C-W>h
 "tnoremap <BS> <C-\><C-N><C-w>h
+tnoremap <Esc> <C-\><C-n>
 tnoremap <C-j> <C-\><C-N><C-w>j
 tnoremap <C-k> <C-\><C-N><C-w>k
 tnoremap <C-l> <C-\><C-N><C-w>l
@@ -131,10 +132,23 @@ nnoremap <C-l> <C-w>l
 " Automatically enter terminal mode when switching to a terminal buffer.
 autocmd BufWinEnter,WinEnter term://* startinsert
 
+" Use arrow keys to resize panes
+nnoremap <Up>     :resize -2<CR>
+nnoremap <Down>       :resize +2<CR>
+nnoremap <Left>     :vertical resize +2<CR>
+nnoremap <Right>    :vertical resize -2<CR>
+
 let mapleader=";"
-nnoremap <silent> <leader><SPACE> :split<CR>
+nnoremap <silent> <leader><SPACE> :split<CR>:term<CR>
 nnoremap <silent> <leader><CR> :vsplit<CR>:term<CR>
 
 " open splits to the bottom and right, which feels more natural
 set splitbelow
 set splitright
+
+" Enable the list of buffers
+"let g:airline#extensions#tabline#enabled = 1
+
+" Show just the filename
+"let g:airline#extensions#tabline#fnamemod = ':t'
+set rtp+=~/.fzf
