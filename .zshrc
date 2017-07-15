@@ -54,3 +54,5 @@ fi
 alias ag='ag -s '
 alias vi='nvim'
 alias vim='vim'
+
+source ~/.fzf.zsh

@@ -41,13 +41,10 @@ modify ib so that it prints the compiler commands
 ## vim
 .vim/autoload:
   pathogen.vim
-.vim/bundle:
-  ack.vim
-  ctrlp.vim
-  nerdtree
-  vim-colors-solarized
-  vim-fugitive
-  YouCompleteMe
+
+[john@john-vm bundle]$ ls
+ack.vim  ctrlp.vim  fzf.vim  nerdcommenter  nerdtree  vim-airline  vim-airline-themes  vim-colors-solarized  vim-fugitive  YouCompleteMe
+[john@john-vm bundle]$
 
 ## youcompleteme
 
