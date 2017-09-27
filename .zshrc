@@ -55,7 +55,15 @@ alias ag='ag -s '
 alias vi='nvim'
 alias vim='vim'
 
-export PATH=$PATH:~/gradle-2.2.1/bin
+GRADLE_SYSTEM="/usr/local/gradle/bin"
+GRADLE_LOCAL="~/gradle-2.2.1/bin"
+
+if [ -d $GRADLE_LOCAL ]; then
+  export PATH=$PATH:$GRADLE_LOCAL
+fi
+if [ -d $GRADLE_SYSTEM ]; then
+  export PATH=$PATH:$GRADLE_SYSTEM
+fi
 
 MAC_JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home"
 LINUX_JAVA_HOME="/usr/lib/jvm/java-8-oracle"
