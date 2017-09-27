@@ -1,6 +1,18 @@
+" To disable a plugin, add it's bundle name to the following list
+let g:pathogen_disabled = []
+
 execute pathogen#infect()
 syntax on
 filetype plugin indent on
+
+" don't autoindent yaml when hitting the '#' key
+" (i like to comment out blocks of yaml)
+autocmd FileType yaml setl indentkeys-=<#>
+autocmd FileType yaml setl indentkeys-=0#
+
+" make public: and private: blocks in c++ indent back
+set cinoptions+=g0
+set cinoptions+=N-s
 
 " don't give unsaved file warning when switching buffers (only when exiting)
 "set hidden
@@ -9,9 +21,15 @@ set background=dark
 colorscheme solarized
 set cursorline
 
-set tabstop=4
-set shiftwidth=4
+set autoread " automatically check for changes in the file
+
+set tabstop=2
+set shiftwidth=2
 set expandtab
+
+" show tabs
+set list
+set listchars=tab:>.
 
 " make backspace work over newlines and indentation
 set backspace=indent,eol,start
@@ -29,27 +47,27 @@ set noincsearch     " don't jump around to the next match as we're typing
 command W w
 command Wq wq
 
+let mapleader=";"
+
 set rtp+=~/.fzf
-nmap ,t :Files<CR>
+nmap ,t :call FuzzyFind()<CR>
 imap <c-x><c-l> <plug>(fzf-complete-line)
+let $FZF_DEFAULT_COMMAND = '(git ls-tree -r --name-only HEAD || find . -path "*/\.*" -prune -o -type f -print -o -type l -print | sed s/^..//) 2> /dev/null'
+
+function FuzzyFind()
+  " Contains a null-byte that is stripped.
+  let gitparent=system('git rev-parse --show-toplevel')[:-2]
+  if empty(matchstr(gitparent, '^fatal:.*'))
+    silent execute ':Files ' . gitparent
+  else
+    silent execute ':Files .'
+  endif
+endfunction
 
 " typing 'jj' is faster than hitting escape
 imap jj <Esc>
 
-let Tlist_Use_Right_Window=1
-let Tlist_Enable_Fold_Column=0
-let Tlist_Show_One_File=1 " especially with this one
-let Tlist_Compact_Format=1
-"let Tlist_Ctags_Cmd='/opt/local/bin/ctags'
 set updatetime=1000
-
-" Add the following below if you want to generate ctags upon saving a file
-" Auto-generate ctags upon making changes to a file
-"autocmd BufWritePost *.erl :silent !(cd %:p:h;ctags *)&
-
-" If you want to auto compile (erlc) upon saving a file, then add that one as well
-" Run erlc on the file being saved
-"autocmd BufWritePost *.erl :!erlc <afile>
 
 " Disables auto commenting
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -59,15 +77,15 @@ autocmd BufReadPost,FileReadPost,BufNewFile * call system("tmux rename-window $(
 augroup autocom
     autocmd!
     "executes the command on quit
-     autocmd VimLeave * call system("tmux rename-window zsh")
+     autocmd VimLeave * call system("tmux setw automatic-rename")
 augroup END
 
 " Uses filename regex for searching, not contents (seems to get better results)
-let g:ctrlp_regexp = 1
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.beam,*/.eunit/*,*.pyc
+"let g:ctrlp_regexp = 1
+"set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.beam,*/.eunit/*,*.pyc
 
 " Faster ctrlp indexing with ag
-let g:ctrlp_user_command = 'ag %s -i --nogroup --hidden --ignore .git --ignore .svn --ignore .hg --ignore "**/*.pyc" --ignore .DS_Store --ignore "**/*.ebin" --ignore "**/*.swp" --ignore "**/*.so" -g ""'
+"let g:ctrlp_user_command = 'ag %s -i --nogroup --hidden --ignore .git --ignore .svn --ignore .hg --ignore "**/*.pyc" --ignore .DS_Store --ignore "**/*.ebin" --ignore "**/*.swp" --ignore "**/*.so" -g ""'
 
 " F2 key opens Nerdtree
 nmap <F2> :NERDTreeToggle<CR>
@@ -104,20 +122,13 @@ nmap <C-]> :YcmCompleter GoTo<CR>
 "unmap <C-t>
 nmap <C-t> <C-o>
 
-" Ack.vim
-
-" Use ag instead of ack - much faster
-let g:ackprg = 'ag'
-" map Ctrl-/ to search
-nmap <C-_> :Ack
-
 " F4 key toggles comments on or off
 nnoremap <F4> :call NERDComment(0,"toggle")<CR>
 vnoremap <F4> :call NERDComment(0,"toggle")<CR>
 
 " Map Ctrl-h,j,k,l to move around splits
 " Need to do some annoying term mapping to get Ctrl-H to work on os x
-"tnoremap <Esc><Esc> <C-\><C-n>
+tnoremap <silent> <leader>; <C-\><C-N>
 tnoremap <C-j> <C-\><C-N><C-w>j
 tnoremap <C-k> <C-\><C-N><C-w>k
 tnoremap <C-l> <C-\><C-N><C-w>l
@@ -134,73 +145,28 @@ nnoremap <C-l> <C-w>l
 autocmd BufWinEnter,WinEnter term://* startinsert
 
 " Use arrow keys to resize panes
-nnoremap <Up>     :resize -2<CR>
-nnoremap <Down>   :resize +2<CR>
-nnoremap <Left>   :vertical resize +2<CR>
-nnoremap <Right>  :vertical resize -2<CR>
+"nnoremap <Up>     :resize -2<CR>
+"nnoremap <Down>   :resize +2<CR>
+"nnoremap <Left>   :vertical resize +2<CR>
+"nnoremap <Right>  :vertical resize -2<CR>
 
-let mapleader=";"
 nnoremap <silent> <leader><SPACE> :split<CR>:term<CR>
 nnoremap <silent> <leader><CR> :vsplit<CR>:term<CR>
+
+" <leader>d closes current buffer without destroying split
+nnoremap <silent> <leader>d :bp\|bd#<CR>
+nnoremap <silent> <leader>D :bp\|bd!#<CR>
+
+nnoremap <silent> <leader>b :Buffers<CR>
+
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+cmap w!! w !sudo tee > /dev/null %
 
 " open splits to the bottom and right, which feels more natural
 set splitbelow
 set splitright
 
-" Enable the list of buffers
-"let g:airline#extensions#tabline#enabled = 1
+" support the mouse scroll wheel
+set mouse=a
 
-" Show just the filename
-"let g:airline#extensions#tabline#fnamemod = ':t'
-
-"let g:airline#extensions#tabline#enabled = 2
-"let g:airline#extensions#tabline#fnamemod = ':t'
-"let g:airline#extensions#tabline#left_sep = ' '
-"let g:airline#extensions#tabline#left_alt_sep = '|'
-"let g:airline#extensions#tabline#right_sep = ' '
-"let g:airline#extensions#tabline#right_alt_sep = '|'
-"let g:airline_left_sep = ' '
-"let g:airline_left_alt_sep = '|'
-"let g:airline_right_sep = ' '
-"let g:airline_right_alt_sep = '|'
-"let g:airline_theme= 'solarized'
 let g:airline_solarized_bg='dark'
-
-" air-line
-"let g:airline_powerline_fonts = 1
-"
-"if !exists('g:airline_symbols')
-"    let g:airline_symbols = {}
-"endif
-
-" unicode symbols
-"let g:airline_left_sep = '»'
-"let g:airline_left_sep = '▶'
-"let g:airline_right_sep = '«'
-"let g:airline_right_sep = '◀'
-"let g:airline_symbols.linenr = '␊'
-"let g:airline_symbols.linenr = '␤'
-"let g:airline_symbols.linenr = '¶'
-"let g:airline_symbols.branch = '⎇'
-"let g:airline_symbols.paste = 'ρ'
-"let g:airline_symbols.paste = 'Þ'
-"let g:airline_symbols.paste = '∥'
-"let g:airline_symbols.whitespace = 'Ξ'
-
-" airline symbols
-"let g:airline_left_sep = ''
-"let g:airline_left_alt_sep = ''
-"let g:airline_right_sep = ''
-"let g:airline_right_alt_sep = ''
-"let g:airline_symbols.branch = ''
-"let g:airline_symbols.readonly = ''
-"let g:airline_symbols.linenr = ''
-
-" old vim-powerline symbols
-"let g:airline_left_sep = '»'
-"let g:airline_left_alt_sep = '⮁'
-"let g:airline_right_sep = '«'
-"let g:airline_right_alt_sep = '⮃'
-"let g:airline_symbols.branch = '⭠'
-"let g:airline_symbols.readonly = '⭤'
-"let g:airline_symbols.linenr = '⭡'

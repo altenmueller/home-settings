@@ -27,7 +27,7 @@ zstyle ':completion:*' completer _expand _complete _correct _approximate
 zstyle ':completion:*' format 'Completing %d'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' menu select=2
-eval "$(dircolors -b)"
+#eval "$(dircolors -b)"
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
@@ -54,5 +54,16 @@ fi
 alias ag='ag -s '
 alias vi='nvim'
 alias vim='vim'
+
+export PATH=$PATH:~/gradle-2.2.1/bin
+
+MAC_JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home"
+LINUX_JAVA_HOME="/usr/lib/jvm/java-8-oracle"
+
+if [ -d $MAC_JAVA_HOME ]; then
+    export JAVA_HOME=$MAC_JAVA_HOME
+elif [ -d $LINUX_JAVA_HOME ]; then
+    export JAVA_HOME=$LINUX_JAVA_HOME
+fi
 
 source ~/.fzf.zsh
