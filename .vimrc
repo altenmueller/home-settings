@@ -1,4 +1,4 @@
-" To disable a plugin, add it's bundle name to the following list
+" To disable a plugin, add its bundle name to the following list
 let g:pathogen_disabled = []
 
 execute pathogen#infect()
@@ -60,6 +60,17 @@ function FuzzyFind()
   if empty(matchstr(gitparent, '^fatal:.*'))
     silent execute ':Files ' . gitparent
   else
+    silent execute ':Files .'
+  endif
+endfunction
+
+function AgFind()
+  " Contains a null-byte that is stripped.
+  let gitparent=system('git rev-parse --show-toplevel')[:-2]
+  if empty(matchstr(gitparent, '^fatal:.*'))
+    call fzf#vim#grep('git grep --line-number '.shellescape(<q-args>), 0, <bang>0)
+  else
+    " WIP...
     silent execute ':Files .'
   endif
 endfunction
@@ -160,7 +171,7 @@ nnoremap <silent> <leader>D :bp\|bd!#<CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 
 " Allow saving of files as sudo when I forgot to start vim using sudo.
-cmap w!! w !sudo tee > /dev/null %
+cmap !w w !sudo tee > /dev/null %
 
 " open splits to the bottom and right, which feels more natural
 set splitbelow

@@ -56,7 +56,7 @@ alias vi='nvim'
 alias vim='vim'
 
 GRADLE_SYSTEM="/usr/local/gradle/bin"
-GRADLE_LOCAL="~/gradle-2.2.1/bin"
+GRADLE_LOCAL="/Users/john/gradle-2.2.1/bin"
 
 if [ -d $GRADLE_LOCAL ]; then
   export PATH=$PATH:$GRADLE_LOCAL
@@ -75,3 +75,7 @@ elif [ -d $LINUX_JAVA_HOME ]; then
 fi
 
 source ~/.fzf.zsh
+# Use ripgrep instead of ag for fzf
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+#bind -x '"\C-p": vim $(fzf);'
